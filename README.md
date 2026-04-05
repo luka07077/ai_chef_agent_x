@@ -51,8 +51,8 @@ flowchart TD
     end
 
     subgraph MCP["🔌 MCP 微服务层"]
-        PY["🐍 chef_core (Python)\n7 个业务工具"]
-        JS["📂 filesystem (Node.js)\nlocal_privacy/ 本地读取"]
+        PY["🐍 chef_core (Python)\n7 个业务工具（冰箱/营养/天气/下单）"]
+        JS["📂 filesystem (Node.js)\n5 个通用文件工具（local_privacy/）"]
     end
 
     subgraph KNOWLEDGE["📚 知识与感知层"]
@@ -249,17 +249,40 @@ lora:
 
 主控大脑，`init_agent_executor()` 负责按配置选择 LLM、加载工具、构建 Agent。使用 `create_agent()` 挂载中间件后通过 `astream` 实现流式 token 输出。
 
-**`mcp_server.py` — 7 个业务工具**
+**`mcp_server.py` — 7 个业务工具（Python MCP 服务）**
 
 | 工具 | 功能 |
 |------|------|
 | `get_fridge_inventory` | 🧊 查询冰箱全量库存 |
 | `add_food_to_fridge` | ➕ 录入食材（同名自动累加数量） |
-| `check_fridge_warnings` | ⚠️ 检测临期（≤3 天）与过期食材 |
-| `check_allergen_safety` | 🚨 校验食材是否触发用户过敏原 |
+| `check_fridge_warnings` | ⚠️ 检测临期（≤3 天）与过期食材，触发安全预警模式 |
+| `check_allergen_safety` | 🚨 校验食材是否触发用户过敏原，零容忍拦截 |
 | `order_fresh_groceries` | 🛒 模拟生鲜下单（实际请求发往 httpbin.org） |
 | `get_nutrition_info` | 🥗 两步查询：搜索接口获取 ID → 详情接口获取每 100g 营养数据（Spoonacular API + 本地降级） |
 | `get_local_weather` | 🌤️ 查询城市实时天气（wttr.in） |
+
+**`local_filesystem` — 通用文件系统工具（Node.js MCP 服务）**
+
+官方 `@modelcontextprotocol/server-filesystem` 服务，访问范围严格限定为 `local_privacy/` 目录。
+
+| 工具 | 功能 |
+|------|------|
+| `read_file` | 📄 读取指定文件的完整内容 |
+| `read_multiple_files` | 📑 批量读取多个文件内容 |
+| `list_directory` | 📂 列出目录下的文件与子目录 |
+| `search_files` | 🔍 按文件名模式搜索文件 |
+| `get_file_info` | ℹ️ 获取文件元信息（大小、修改时间等） |
+
+> 💡 体检报告、私房菜谱等隐私文档存放于 `local_privacy/`，Agent 通过此服务按需读取，文件内容**不进入公网 RAG 向量库**，全程不出本地。
+
+**`@tool` — LangChain 本地工具**
+
+直接以 LangChain `@tool` 装饰器注册，随 Agent 进程启动，无需 MCP 连接。
+
+| 工具 | 所在文件 | 功能 | 可用模式 |
+|------|----------|------|----------|
+| `text_to_speech_tool` | `multimodal/audio_handler.py` | 🔊 调用阿里百炼 TTS 将文本合成语音（CosyVoice），用于菜谱播报、临期提醒 | ☁️ 仅云端 |
+| `search_private_knowledge` | `rag/agentic_rag_core.py` | 🔍 完整 Agentic RAG 流程：查询改写 → 多路召回 → 自我反思质检，检索菜谱/营养/养生知识库 | ☁️ / 🔌 均可 |
 
 **`middleware.py` — 三层中间件**
 
