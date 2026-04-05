@@ -1,0 +1,60 @@
+# ==========================================
+# AI 顶级私厨 Agent 核心配置
+# ==========================================
+
+# 大模型配置
+llm:
+#  main_model: "qwen3-max"
+  main_model: "qwen-max-latest"
+  main_temperature: 0.7
+
+  evaluator_model: "qwen-turbo"
+  evaluator_temperature: 0.1
+  vision_model: "qwen-vl-max"
+  vision_temperature: 0.1
+  vision_max_tokens: 500
+  audio_asr_model: "qwen-audio-turbo"
+  audio_tts_model: "sambert-zhiwei-v1"
+  audio_sample_rate: 16000
+  embedding_model: "text-embedding-v2"
+
+# 状态管理
+state:
+  max_history_messages: 20
+
+# RAG 配置
+rag:
+  collection_name: "chef_knowledge_base"
+  chunk_size: 500
+  chunk_overlap: 50
+  retrieval_top_k: 3
+
+# MCP 外部服务
+mcp:
+  request_timeout: 5.0
+  order_api_url: "https://httpbin.org/post"
+  weather_api_base: "https://wttr.in"
+  nutrition_api_base: "https://api.spoonacular.com"
+  nutrition_api_key: '51ab0b5b6b5340b08193483ba287782f'
+
+# 冰箱管理
+fridge:
+  warning_days: 3
+  default_expire_days: 7
+
+# 用户 (模拟)
+user:
+  default_user_id: "user_001"
+  default_session_id: "user_001_session"
+
+# LoRA 本地微调模型（Ollama 本模式）
+lora:
+  use_lora_adapter: false                          # true = 离线本地模型，false = 云端 API（默认）
+#  use_lora_adapter: true
+  ollama_model: "chef-lora"                        # Ollama 中注册的模型名（ollama create 时指定）
+#  ollama_model: "qwen2.5:7b"
+  ollama_base_url: "http://localhost:11434"         # Ollama 服务地址（默认本地）
+  adapter_path: "lora_tuning/data/lora_adapter"    # adapter 权重路径（备用，Ollama 模式不使用）
+  dataset_dir: "lora_tuning/data/lora_dataset"     # 训练数据目录
+  max_new_tokens: 512
+  temperature: 0.7

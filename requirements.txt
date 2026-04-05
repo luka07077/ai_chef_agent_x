@@ -1,0 +1,39 @@
+# ==========================================
+# AI 顶级私厨 Agent 依赖清单
+# ==========================================
+
+# LangChain 核心
+langchain>=1.2.14
+langchain-community>=0.4.1
+langchain-core>=1.2.23
+langchain-ollama>=0.3.0
+langgraph>=0.2.0
+
+# MCP 协议
+langchain-mcp-adapters>=0.2.2
+mcp>=1.0.0
+
+# 向量数据库
+chromadb>=0.5.0
+langchain-chroma>=1.1.0
+
+# 通义千问 (DashScope)
+dashscope>=1.20.0
+
+# 文本切分
+langchain-text-splitters>=1.1.1
+
+# Web UI
+streamlit>=1.35.0
+
+# 配置文件
+pyyaml>=6.0
+
+# 文档解析 (PDF / DOCX)
+pypdf>=4.0.0
+unstructured>=0.10.0
+
+# 网络请求
+requests>=2.31.0
+
+# LoRA 微调依赖见 lora_tuning/requirements_lora.txt（在 Colab 中单独安装）

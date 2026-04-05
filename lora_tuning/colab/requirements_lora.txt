@@ -1,0 +1,23 @@
+# ==========================================
+# LoRA 微调专用依赖（在 Colab 中安装）
+# 与主项目 requirements.txt 分离，避免污染本地环境
+# ==========================================
+
+# 深度学习框架
+torch>=2.2.0
+accelerate>=0.28.0
+
+# HuggingFace 生态
+transformers>=4.40.0
+datasets>=2.18.0
+
+# LoRA / QLoRA 微调
+peft>=0.10.0
+trl>=0.8.0
+bitsandbytes>=0.43.0
+
+# 通义千问 OpenAI 兼容接口（Self-Instruct 数据扩充 + LLM-as-Judge）
+openai>=1.30.0
+
+# 工具
+tqdm>=4.66.0
