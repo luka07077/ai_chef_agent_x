@@ -26,6 +26,7 @@ data/
 lora_tuning/outputs/*
 #!lora_tuning/outputs/chef_lora_q4.gguf
 !lora_tuning/outputs/Modelfile
+lora_tuning/colab
 
 # 会话记忆（运行时生成）
 memory_sessions/
